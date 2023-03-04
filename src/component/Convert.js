@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 
 const Convert = () => {
 
-    const [firstInput,setFirstInput] = useState('')
+    const [length,setLength] = useState('')
     const [actualInput,setActualInput] = useState('')
     const { register,handleSubmit,setValue,  formState: { errors } } = useForm();
     
@@ -14,6 +14,7 @@ const Convert = () => {
         
     
         let englishNumber = '';
+
         for (let i = 0; i < input.length; i++) {
           const digit = input.charAt(i);
           const index = bengaliDigits.indexOf(digit);
@@ -43,27 +44,44 @@ const Convert = () => {
 
     return ( 
              <>
-                <div>Convert</div>
+             <p>Input Bangla/English Numbers</p>
+             
 
                 <form onSubmit={handleSubmit(onSubmit)}>
 
-                    <p>Shei Form</p>
+                    
                     <div className="form-input">
                     <input 
                         className="banglaInput" 
                         type="text"
-                        value={firstInput} 
-                        {...register("length", { onChange: (e)=>{
-                            setFirstInput(e.target.value);
+                        value={length} 
+                        {...register("length", 
+                            { 
+                            onChange: (e)=>
+                            {
+                            setLength(e.target.value);
                             setActualInput(convertBanglaToEnglish(e.target.value))
-                        }, required: true, max: 50, min: 20})}
+                            },
+                            
+                            required: true, max: 50, min: 20,
+                            pattern: /[0-9০১২৩৪৫৬৭৮৯]+/i
+
+                            })
+                        }
                     />
-                  
-                    {errors.length && <span className="text-danger fw-bold m-1" >অনুগ্রহ করে সঠিক দৈর্ঘ্য টাইপ করুন*</span>}
+                  <div>
+                    {errors.length && errors.length.type === "required" && (<span className="error" >অনুগ্রহ করে দৈর্ঘ্য টাইপ করুন*</span>)}
+                    {errors.length && errors.length.type === "max" && ( <span  className="error" >Max length exceeded</span>)}
+                    {errors.length && errors.length.type === "min" && ( <span  className="error" >min length receded</span>)}
+                    {errors.length && errors.length.type === "pattern" && ( <span className="error" >অনুগ্রহ করে শুধুমাত্র সংখ্যা ইনপুট করুন*</span>)}
+                  </div>
+                    
                     </div>
 
                     <button type="submit" onClick={handleInputValues}>submit</button>
                 </form>
+
+                <small>check console for outputs</small>
     
              </>
             )
